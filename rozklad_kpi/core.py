@@ -14,6 +14,12 @@ class KpiScheduleAPI:
         ))
         return asyncio.get_event_loop().run_until_complete(tasks)
 
+    def get_current_week(self):
+        return self._request((Endpoint.current_week, {}))
+
+    def get_current_api_version(self):
+        return self._request((Endpoint.current_api_version, {}))
+
     def group(self, group_id=None, offset: int = 0):
 
         if isinstance(group_id, int):
@@ -86,6 +92,9 @@ class Endpoint:
     teachers_by_id__can_vote = teachers_by_id + "/canvote"
     teachers_by_id__vote = teachers_by_id + "/vote"
 
+    current_week = BASE_URL + "/weeks"
+    current_api_version = BASE_URL + "/version"
+
     @staticmethod
     async def request(path, params, headers=None):
         headers = headers or {}
@@ -104,7 +113,6 @@ class Endpoint:
 
     @staticmethod
     def prepare_filter_params(**kwargs):
-        print(kwargs.get("offset"))
         return {"filter": json.dumps(
             dict({"offset": kwargs.get("offset", 0), "limit": kwargs.get("offset", 100)}, **kwargs)
         )}
