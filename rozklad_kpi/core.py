@@ -47,6 +47,21 @@ class KpiScheduleAPI:
             Endpoint.prepare_filter_params(**kwargs)
         ))
 
+    def teacher(self, teacher_id=None, offset: int = 0):
+
+        if isinstance(teacher_id, int):
+            data = self._request(
+                (Endpoint.teachers_by_id.format(teacher_id), Endpoint.prepare_filter_params()),
+                (Endpoint.teachers_by_id__vote.format(teacher_id), Endpoint.prepare_filter_params()),
+                (Endpoint.teachers_by_id__can_vote.format(teacher_id), Endpoint.prepare_filter_params()),
+            )
+        elif isinstance(teacher_id, str):
+            data = self._request((Endpoint.teachers, Endpoint.prepare_search_query(teacher_id)))
+        else:
+            data = self._request((Endpoint.group, Endpoint.prepare_filter_params(offset=offset)))
+
+        return data
+
 
 class Endpoint:
 
