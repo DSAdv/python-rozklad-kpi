@@ -9,19 +9,31 @@ class KpiScheduleAPI:
 
     @staticmethod
     def _request(*request_args):
+        """Run async methods using asyncio lib
+
+        :param request_args: list of tuples, each element include url and params
+        :return: list of response JSONs
+        """
         tasks = asyncio.gather(*(
             Endpoint.request(*args) for args in request_args
         ))
         return asyncio.get_event_loop().run_until_complete(tasks)
 
     def get_current_week(self):
+        """Current study week for KPI schedule"""
         return self._request((Endpoint.current_week, {}))
 
     def get_current_api_version(self):
+        """Relevant version of KPI schedule API"""
         return self._request((Endpoint.current_api_version, {}))
 
     def group(self, group_id=None, offset: int = 0):
+        """Method for fetching data of study group
 
+        :param group_id: integer ID of study group or string with group name
+        :param offset: integer parameter for pagination
+        :return: JSON
+        """
         if isinstance(group_id, int):
             data = self._request(
                 (Endpoint.group_by_id.format(group_id), Endpoint.prepare_filter_params()),
@@ -39,6 +51,14 @@ class KpiScheduleAPI:
                       day_number: int = None,
                       lesson_number: int = None,
                       lesson_week: int = None):
+        """Method that allow to fetch lessons for study group
+
+        :param group_id: integer ID of study group
+        :param day_number: allowed values - from 1 to 7
+        :param lesson_number: allowed values - from 1 to 5
+        :param lesson_week: allowed values - from 1 and 2
+        :return: JSON
+        """
         kwargs = {}
 
         if day_number:
